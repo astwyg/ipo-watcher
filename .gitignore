@@ -1,0 +1,6 @@
+/log/logs
+/.idea
+/db/data.json
+__pycache__
+/env
+/data
