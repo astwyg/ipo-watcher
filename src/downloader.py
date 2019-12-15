@@ -115,7 +115,7 @@ def check_and_notify():
 
 
 if __name__ == "__main__":
-    # get_all_info()
-    # dowload_pdf_and_convert()
+    get_all_info()
+    dowload_pdf_and_convert()
     check_and_notify()
     browser.quit()
