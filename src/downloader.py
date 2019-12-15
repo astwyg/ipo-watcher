@@ -1,3 +1,7 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+
+
 import requests, time, selenium, os, pdfplumber, codecs
 from selenium import webdriver
 from bs4 import BeautifulSoup
@@ -7,7 +11,9 @@ import db.interface as db
 from log.logger import logger as log
 from src.mail import send_mail
 
-browser = webdriver.Chrome(os.path.join(os.path.dirname(__file__), "chromedriver.exe"))
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--no-sandbox')
+browser = webdriver.Chrome(os.path.join(os.path.dirname(__file__), "chromedriver.exe"), chrome_options=chrome_options)
 
 def get_all_info():
     '''
