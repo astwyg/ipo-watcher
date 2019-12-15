@@ -1,3 +1,4 @@
+# rename this file to config.py
 
 
 # notify
@@ -8,7 +9,7 @@ keyword_threshold = 5
 
 # mail
 mail_config = {
-    "host":"smtp.qq.com",
-    "user":"494100704@qq.com",
-    "passwd":"cuqqyzomdmdlbicj"
+    "host":"smtp.126.com",
+    "user":"",
+    "passwd":""
 }

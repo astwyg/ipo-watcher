@@ -1,9 +1,11 @@
 import requests, time, selenium, os, pdfplumber, codecs
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from src import config
 
 import db.interface as db
 from log.logger import logger as log
+from src.mail import send_mail
 
 browser = webdriver.Chrome(os.path.join(os.path.dirname(__file__), "chromedriver.exe"))
 
@@ -57,27 +59,57 @@ def dowload_pdf_and_convert():
             else:
                 href = href[0]
                 pdf_file = requests.get(href.get_attribute("href"), stream=True)
-                with open("..\\data\\{}.pdf".format(href.get_attribute("title")), "wb") as f:
+                with open("..\\data\\{}.pdf".format(project.get("title")), "wb") as f:
                     for chunk in pdf_file.iter_content(chunk_size=1024):
                         if chunk:
                             f.write(chunk)
                             f.flush()
                 project["downloaded"] = time.strftime("%d_%m_%Y")
-                log.info("{} has been downloaded.".format(href.get_attribute("title")))
+                log.info("{} has been downloaded.".format(project.get("title")))
 
                 try:
-                    with pdfplumber.open("..\\data\\{}.pdf".format(href.get_attribute("title"))) as pdf:
-                        txt_filename = href.get_attribute("title") + ".txt"
+                    with pdfplumber.open("..\\data\\{}.pdf".format(project.get("title"))) as pdf:
+                        txt_filename = project.get("title") + ".txt"
                         with codecs.open("..\\data\\{}".format(txt_filename), "w", encoding="utf-8") as new_f:
                             for page in pdf.pages:
                                 new_f.write(page.extract_text())
-                    log.info("{} had been converted.".format(href.get_attribute("title")))
+                    log.info("{} had been converted.".format(project.get("title")))
                 except:
-                    log.error("{} had convert failed.".format(href.get_attribute("title")))
+                    log.error("{} had convert failed.".format(project.get("title")))
 
     db.write_data(projects)
 
+def check_and_notify():
+    projects = db.read_data()
+    notify_flag = False
+    message = "{}:\n".format(time.strftime("%Y/%m/%d"))
+    for project in projects:
+        if project.get("downloaded") == "14_12_2019": # time.strftime("%d_%m_%Y")
+            keyword_cnt = {}
+            keywords = config.keywords.split(",")
+            with open("..\\data\\{}".format(project.get("title") + ".txt"),"r", encoding="utf-8") as f:
+                content = f.read()
+                for keyword in keywords:
+                    keyword_cnt[keyword] = content.count(keyword)
+            keyword_threshold_cnt = 0
+            for k,v in keyword_cnt.items():
+                keyword_threshold_cnt += v
+            if keyword_threshold_cnt >= config.keyword_threshold:
+                notify_flag = True
+                message = message + "-"*8 + "\n"
+                message = message + project["title"] + "/" + project["link"] + "\n"
+                for k,v in keyword_cnt.items():
+                    message = message + k + " : " + str(v) + "\n"
+    if notify_flag:
+        send_mail(
+            "科创板新股材料自动监测",
+            message,
+            config.email
+        )
+
+
 if __name__ == "__main__":
-    get_all_info()
-    dowload_pdf_and_convert()
+    # get_all_info()
+    # dowload_pdf_and_convert()
+    check_and_notify()
     browser.quit()
