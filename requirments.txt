@@ -1,0 +1,16 @@
+beautifulsoup4==4.8.1
+certifi==2019.11.28
+chardet==3.0.4
+idna==2.8
+pdfminer.six==20181108
+pdfplumber==0.5.14
+Pillow==6.2.1
+pycryptodome==3.9.4
+requests==2.22.0
+selenium==3.141.0
+six==1.13.0
+sortedcontainers==2.1.0
+soupsieve==1.9.5
+unicodecsv==0.14.1
+urllib3==1.25.7
+Wand==0.5.8

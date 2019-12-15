@@ -3,12 +3,13 @@ from email.mime.text import MIMEText
 from email.header import Header
 
 from src.config import mail_config
+from src import config
 from log.logger import logger as log
 
 def send_mail(subject, content, receiver):
     message = MIMEText(content, 'plain', 'utf-8')
-    message['From'] = Header("auto mail", 'utf-8')
-    message['To'] = Header("null", 'utf-8')
+    message['From'] = Header(mail_config["user"], 'utf-8')
+    message['To'] = Header(config.email, 'utf-8')
     message['Subject'] = Header(subject, 'utf-8')
 
     try:
