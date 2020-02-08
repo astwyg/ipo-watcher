@@ -66,7 +66,7 @@ def dowload_pdf_and_convert():
                 href = href[0]
                 pdf_file = requests.get(href.get_attribute("href"), stream=True)
                 with open("..\\data\\{}.pdf".format(project.get("title")), "wb") as f:
-                    for chunk in pdf_file.iter_content(chunk_size=1024):
+                    for chunk in pdf_file.iter_content(chunk_size=128):
                         if chunk:
                             f.write(chunk)
                             f.flush()
